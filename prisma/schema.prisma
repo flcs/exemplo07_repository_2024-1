@@ -4,21 +4,71 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+
 generator client {
   provider = "prisma-client-js"
 }
 
+// Criado com:
+// $ npx prisma init --datasource-provider postgresql
+// 
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// Criado com:
+// $ npx prisma init --datasource-provider sqlite
+//
+
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 
+//
+// Vejam exemplo na página: https://www.prisma.io/docs/orm/prisma-schema/data-model/models
+//
+
+//
+// para gerar o banco use o comando:
+// $ npx prisma migrate dev
+//
 model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  name    String?
+  posts   Post[]
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  published  Boolean    @default(false)
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  categories Category[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
   posts Post[]
 }
 
-
+model Cliente {
+    id        Int @id @default(autoincrement())
+    nome      String
+    email     String @unique
+    telefone  String
+    endereco  String
+    cidade    String
+    estado    String
+    cep       String
+    cpf       String @unique
+    
+    @@map("clientes")
+}
